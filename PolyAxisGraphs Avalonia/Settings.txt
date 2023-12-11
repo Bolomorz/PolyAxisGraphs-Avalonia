@@ -1,0 +1,8 @@
+#Settings for Multiple Y Axis Data
+#
+#initial directory, directory of input data files and saved files
+initialdirectory=..\..\..\DataFiles\
+#
+#default language, language file of default language
+defaultlanguage=..\..\..\LanguageFiles\EN.lng
+#

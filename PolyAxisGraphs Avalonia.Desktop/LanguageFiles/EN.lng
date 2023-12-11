@@ -1,0 +1,23 @@
+﻿#Language File for Language <EN>
+#
+#for commenting use # as first character in line
+#attributes in format:		attribute=value
+#value cannot contain '='! (only one separator '=' per line allowed)
+#one attribute per line
+#
+#Button bt
+btopenfile=...
+#Label lb
+#
+#TextBox tb
+tbopenfile=open data file
+#
+#CheckBox cb
+#
+#ListBox lb
+#
+#Error er
+#
+#FileDialog fd
+#
+#Title tl
