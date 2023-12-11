@@ -14,7 +14,7 @@
 
   <Grid x:Name="MainGrid" ShowGridLines="True" ColumnDefinitions="*,*,*,*" RowDefinitions="*,*,8*">
     <Canvas x:Name="MainCanvas" Grid.Column="0" Grid.ColumnSpan="4" Grid.Row="2" Background="Gainsboro" Margin="5" />
-    <TextBox x:Name="TBFile" Grid.Column="0" Grid.ColumnSpan="1" Grid.Row="0" Margin="5"/>
-    <Button x:Name="BTOpenFile" Grid.Column="0" Grid.Row="0" Click="OpenFileButtonClick" HorizontalAlignment="Right">...</Button>
+    <TextBox x:Name="TBFile" IsReadOnly="True" Grid.Column="0" Grid.ColumnSpan="1" Grid.Row="0" Margin="5"/>
+    <Button x:Name="BTOpenFile" Grid.Column="0" Grid.Row="0" Click="OpenFileButtonClick" HorizontalAlignment="Right"/>
   </Grid>
 </UserControl>
