@@ -14,7 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\PolyAxisGraphs Avalonia\PolyAxisGraphs Avalonia.csproj" />
+    <ProjectReference Include="..\PolyAxisGraphsAvalonia\PolyAxisGraphsAvalonia.csproj" />
   </ItemGroup>
 
   <ItemGroup>

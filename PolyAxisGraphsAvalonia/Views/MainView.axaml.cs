@@ -43,7 +43,7 @@ public partial class MainView : UserControl
                 FileTypeFilter = new[] { DataFiles }
             });
 
-            if (files is not null)
+            if (files is not null && files.Count >= 1)
             {
                 string file = files[0].Path.AbsolutePath;
                 TBFile.Text = file;

@@ -7,7 +7,9 @@ using System.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.Controls.Shapes;
 using Avalonia.Media;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using PolyAxisGraphs_Backend;
+using System.Diagnostics;
 
 namespace PolyAxisGraphs_Avalonia.Views
 {
@@ -24,9 +26,8 @@ namespace PolyAxisGraphs_Avalonia.Views
 
         public static Avalonia.Media.ISolidColorBrush ColorToBrush(System.Drawing.Color color)
         {
-            int c = ColorTranslator.ToOle(color);
-            uint uc = (uint)c;
-            return new SolidColorBrush(uc);
+            Avalonia.Media.Color amcolor = Avalonia.Media.Color.FromArgb(color.A, color.R, color.G, color.B);
+            return new SolidColorBrush(amcolor);
         }
 
         public void SetLanguage(string lngfile)
@@ -42,7 +43,8 @@ namespace PolyAxisGraphs_Avalonia.Views
             double col = 10;
             foreach(var series in pag.series)
             {
-                DrawLine(new Avalonia.Point(10, col), new Avalonia.Point(100, col), ColorToBrush(series.color), 1);
+                DrawLine(new Avalonia.Point(10, col), new Avalonia.Point(100, col), ColorToBrush(series.color), 0.5);
+                col += 10;
             }
         }
 
