@@ -40,11 +40,53 @@ namespace PolyAxisGraphs_Avalonia.Views
             pag.SetFilePath(datafile);
             pag.ReadData();
             canvas.Children.Clear();
-            double col = 10;
-            foreach(var series in pag.series)
+            FontFamily ff = (pag.settings.fontfamily is null) ? new FontFamily("Consolas") : new FontFamily(pag.settings.fontfamily);
+            Debug.WriteLine("create gde... {0} {1}", canvas.Width, canvas.Height);
+            GraphDrawingElements gde = new GraphDrawingElements(canvas.Width, canvas.Height, pag, pag.settings);
+            Debug.WriteLine("calc gde...");
+            var sol = gde.CalculateChart();
+            Debug.WriteLine("sol gde...");
+            if (sol.err is not null) DrawText(10, ff, sol.err, 10, 10);
+            else
             {
-                DrawLine(new Avalonia.Point(10, col), new Avalonia.Point(100, col), ColorToBrush(series.color), 0.5);
-                col += 10;
+                if(sol.chartarea is not null)
+                {
+                    var area = (GraphDrawingElements.Rectangle)sol.chartarea;
+                    DrawRectangle(area.width, area.height, Brushes.Transparent, Brushes.Black, 1, area.left, area.top);
+                }
+                if(sol.datearea is not null)
+                {
+                    var area = (GraphDrawingElements.Rectangle)sol.datearea;
+                    DrawRectangle(area.width, area.height, Brushes.Transparent, Brushes.Black, 1, area.left, area.top);
+                }
+                if(sol.functionarea is not null)
+                {
+                    var area = (GraphDrawingElements.Rectangle)sol.functionarea;
+                    DrawRectangle(area.width, area.height, Brushes.Transparent, Brushes.Black, 1, area.left, area.top);
+                }
+                if(sol.legendarea is not null)
+                {
+                    var area = (GraphDrawingElements.Rectangle)sol.legendarea;
+                    DrawRectangle(area.width, area.height, Brushes.Transparent, Brushes.Black, 1, area.left, area.top);
+                }
+                if(sol.titlearea is not null)
+                {
+                    var area = (GraphDrawingElements.Rectangle)sol.titlearea;
+                    DrawRectangle(area.width, area.height, Brushes.Transparent, Brushes.Black, 1, area.left, area.top);
+                }
+                if(sol.yaxisarea is not null)
+                {
+                    var area = (GraphDrawingElements.Rectangle)sol.yaxisarea;
+                    DrawRectangle(area.width, area.height, Brushes.Transparent, Brushes.Black, 1, area.left, area.top);
+                }
+                if(sol.texts is not null)
+                {
+                    foreach(var text in sol.texts) DrawText(text.fontsize, ff, text.text, text.left, text.top);
+                }
+                if(sol.lines is not null)
+                {
+                    foreach (var line in sol.lines) DrawLine(new Avalonia.Point(line.start.x, line.start.y), new Avalonia.Point(line.end.x, line.end.y), ColorToBrush(line.color), line.thickness);
+                }
             }
         }
 
