@@ -10,4 +10,4 @@ controlfontsize=9
 chartfontsize=8
 charttitlefontsize=10
 fontfamily=Consolas
-chartgridinterval=10
+chartgridinterval=20
