@@ -108,7 +108,8 @@ namespace PolyAxisGraphs_Avalonia.Views
             {
                 FontSize = fontsize,
                 FontFamily = fontFamily,
-                Text = text
+                Text = text,
+                TextAlignment = TextAlignment.Center,
             };
             Canvas.SetLeft(tb, left);
             Canvas.SetTop(tb, top);

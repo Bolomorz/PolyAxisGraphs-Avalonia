@@ -11,3 +11,4 @@ chartfontsize=8
 charttitlefontsize=10
 fontfamily=Consolas
 chartgridinterval=20
+yaxiswidth=30
