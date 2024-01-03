@@ -49,36 +49,6 @@ namespace PolyAxisGraphs_Avalonia.Views
             if (sol.err is not null) DrawText(10, ff, sol.err, 10, 10);
             else
             {
-                if(sol.chartarea is not null)
-                {
-                    var area = (GraphDrawingElements.Rectangle)sol.chartarea;
-                    DrawRectangle(area.width, area.height, Brushes.Transparent, Brushes.Black, 1, area.left, area.top);
-                }
-                if(sol.datearea is not null)
-                {
-                    var area = (GraphDrawingElements.Rectangle)sol.datearea;
-                    DrawRectangle(area.width, area.height, Brushes.Transparent, Brushes.Black, 1, area.left, area.top);
-                }
-                if(sol.functionarea is not null)
-                {
-                    var area = (GraphDrawingElements.Rectangle)sol.functionarea;
-                    DrawRectangle(area.width, area.height, Brushes.Transparent, Brushes.Black, 1, area.left, area.top);
-                }
-                if(sol.legendarea is not null)
-                {
-                    var area = (GraphDrawingElements.Rectangle)sol.legendarea;
-                    DrawRectangle(area.width, area.height, Brushes.Transparent, Brushes.Black, 1, area.left, area.top);
-                }
-                if(sol.titlearea is not null)
-                {
-                    var area = (GraphDrawingElements.Rectangle)sol.titlearea;
-                    DrawRectangle(area.width, area.height, Brushes.Transparent, Brushes.Black, 1, area.left, area.top);
-                }
-                if(sol.yaxisarea is not null)
-                {
-                    var area = (GraphDrawingElements.Rectangle)sol.yaxisarea;
-                    DrawRectangle(area.width, area.height, Brushes.Transparent, Brushes.Black, 1, area.left, area.top);
-                }
                 if(sol.texts is not null)
                 {
                     foreach(var text in sol.texts) DrawText(text.fontsize, ff, text.text, text.left, text.top);
