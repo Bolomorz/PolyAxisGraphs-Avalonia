@@ -10,6 +10,7 @@ using Avalonia.Media;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using PolyAxisGraphs_Backend;
 using System.Diagnostics;
+using Avalonia.Controls.Documents;
 
 namespace PolyAxisGraphs_Avalonia.Views
 {
@@ -39,23 +40,50 @@ namespace PolyAxisGraphs_Avalonia.Views
         {
             pag.SetFilePath(datafile);
             pag.ReadData();
+            pag.CalculateRegression(pag.series[0], Regression.FunctionType.Logarithm, 0);
+            pag.series[0].showfunction = true;
+            DrawGDE(new GraphDrawingElements(canvas.Width, canvas.Height, pag));
+        }
+
+        public void DrawGDE(GraphDrawingElements gde)
+        {
             canvas.Children.Clear();
             FontFamily ff = (pag.settings.fontfamily is null) ? new FontFamily("Consolas") : new FontFamily(pag.settings.fontfamily);
-            Debug.WriteLine("create gde... {0} {1}", canvas.Width, canvas.Height);
-            GraphDrawingElements gde = new GraphDrawingElements(canvas.Width, canvas.Height, pag, pag.settings);
-            Debug.WriteLine("calc gde...");
+            double fontsize = (pag.settings.chartfontsize is null) ? 10 : (double)pag.settings.chartfontsize;
             var sol = gde.CalculateChart();
-            Debug.WriteLine("sol gde...");
             if (sol.err is not null) DrawText(10, ff, sol.err, 10, 10);
             else
             {
-                if(sol.texts is not null)
+                if (sol.texts is not null)
                 {
-                    foreach(var text in sol.texts) DrawText(text.fontsize, ff, text.text, text.left, text.top);
+                    foreach (var text in sol.texts) DrawText(text.fontsize, ff, text.text, text.left, text.top);
                 }
-                if(sol.lines is not null)
+                if (sol.lines is not null)
                 {
                     foreach (var line in sol.lines) DrawLine(new Avalonia.Point(line.start.x, line.start.y), new Avalonia.Point(line.end.x, line.end.y), ColorToBrush(line.color), line.thickness);
+                }
+                if (sol.functions is not null && sol.functions.Count > 0)
+                {
+                    double left, top, height;
+                    if(sol.functionarea is null)
+                    {
+                        left = 0.91 * canvas.Width;
+                        top = 0.11 * canvas.Height;
+                        height = 0.95 * canvas.Height - 0.11 * canvas.Height;
+                    }
+                    else
+                    {
+                        var area = (GraphDrawingElements.Rectangle)sol.functionarea;
+                        left = area.left;
+                        top = area.top;
+                        height = area.height;
+                    }
+                    double intervall = height / sol.functions.Count;
+                    int count = 0;
+                    foreach (var function in sol.functions)
+                    {
+                        if (function is not null) DrawFunctionText(function, fontsize, ff, left, top, top + count * intervall);
+                    }
                 }
             }
         }
@@ -84,6 +112,45 @@ namespace PolyAxisGraphs_Avalonia.Views
             Canvas.SetLeft(tb, left);
             Canvas.SetTop(tb, top);
             canvas.Children.Add(tb);
+        }
+
+        private void DrawFunctionText(List<Series.FunctionString> strings,double fontsize, FontFamily fontFamily, double left, double top, double bottom)
+        {
+            TextBlock outer = new()
+            {
+                FontSize = fontsize,
+                FontFamily = fontFamily,
+            };
+            outer.Inlines = new InlineCollection();
+            foreach(var fs in strings)
+            {
+                if (fs.superscript)
+                {
+                    Run run = new()
+                    {
+                        FontSize = fontsize,
+                        FontFamily = fontFamily,
+                        BaselineAlignment = BaselineAlignment.Superscript,
+                        Text = fs.function
+                    };
+                    outer.Inlines.Add(run);
+                }
+                else
+                {
+                    Run run = new()
+                    {
+                        FontSize = fontsize,
+                        FontFamily = fontFamily,
+                        BaselineAlignment = BaselineAlignment.Baseline,
+                        Text = fs.function
+                    };
+                    outer.Inlines.Add(run);
+                }
+            }
+            Canvas.SetLeft(outer, left);
+            Canvas.SetTop(outer, top);
+            Canvas.SetBottom(outer, bottom);
+            canvas.Children.Add(outer);
         }
 
         private void DrawEllipse(double width, double height, Avalonia.Media.ISolidColorBrush fill, Avalonia.Media.ISolidColorBrush stroke, double thickness, double left, double top)
