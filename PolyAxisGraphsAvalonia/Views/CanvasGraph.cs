@@ -40,8 +40,6 @@ namespace PolyAxisGraphs_Avalonia.Views
         {
             pag.SetFilePath(datafile);
             pag.ReadData();
-            pag.CalculateRegression(pag.series[0], Regression.FunctionType.Logarithm, 0);
-            pag.series[0].showfunction = true;
             DrawGDE(new GraphDrawingElements(canvas.Width, canvas.Height, pag));
         }
 
@@ -51,12 +49,12 @@ namespace PolyAxisGraphs_Avalonia.Views
             FontFamily ff = (pag.settings.fontfamily is null) ? new FontFamily("Consolas") : new FontFamily(pag.settings.fontfamily);
             double fontsize = (pag.settings.chartfontsize is null) ? 10 : (double)pag.settings.chartfontsize;
             var sol = gde.CalculateChart();
-            if (sol.err is not null) DrawText(10, ff, sol.err, 10, 10);
+            if (sol.err is not null) DrawText(10, ff, sol.err, 0, 0, canvas.Width, canvas.Height);
             else
             {
                 if (sol.texts is not null)
                 {
-                    foreach (var text in sol.texts) DrawText(text.fontsize, ff, text.text, text.left, text.top);
+                    foreach (var text in sol.texts) DrawText(text.fontsize, ff, text.text, text.left, text.top, text.right, text.bottom);
                 }
                 if (sol.lines is not null)
                 {
@@ -64,12 +62,13 @@ namespace PolyAxisGraphs_Avalonia.Views
                 }
                 if (sol.functions is not null && sol.functions.Count > 0)
                 {
-                    double left, top, height;
+                    double left, top, height, width;
                     if(sol.functionarea is null)
                     {
                         left = 0.91 * canvas.Width;
                         top = 0.11 * canvas.Height;
                         height = 0.95 * canvas.Height - 0.11 * canvas.Height;
+                        width = 0.99 * canvas.Width - 0.91 * canvas.Width;
                     }
                     else
                     {
@@ -77,12 +76,14 @@ namespace PolyAxisGraphs_Avalonia.Views
                         left = area.left;
                         top = area.top;
                         height = area.height;
+                        width = area.width;
                     }
                     double intervall = height / sol.functions.Count;
                     int count = 0;
                     foreach (var function in sol.functions)
                     {
-                        if (function is not null) DrawFunctionText(function, fontsize, ff, left, top, top + count * intervall);
+                        if (function is not null) DrawFunctionText(function, fontsize, ff, left, top, top + count * intervall, left + width);
+                        count++;
                     }
                 }
             }
@@ -100,26 +101,35 @@ namespace PolyAxisGraphs_Avalonia.Views
             canvas.Children.Add(line);
         }
 
-        private void DrawText(double fontsize, Avalonia.Media.FontFamily fontFamily, string text, double left, double top)
+        private void DrawText(double fontsize, Avalonia.Media.FontFamily fontFamily, string text, double left, double top, double right, double bottom)
         {
             TextBlock tb = new()
             {
                 FontSize = fontsize,
                 FontFamily = fontFamily,
                 Text = text,
+                Width = right - left,
+                Height = bottom - top,
+                TextWrapping = TextWrapping.Wrap,
                 TextAlignment = TextAlignment.Center,
             };
             Canvas.SetLeft(tb, left);
             Canvas.SetTop(tb, top);
+            Canvas.SetRight(tb, right);
+            Canvas.SetBottom(tb, bottom);
             canvas.Children.Add(tb);
         }
 
-        private void DrawFunctionText(List<Series.FunctionString> strings,double fontsize, FontFamily fontFamily, double left, double top, double bottom)
+        private void DrawFunctionText(List<Series.FunctionString> strings,double fontsize, FontFamily fontFamily, double left, double top, double bottom, double right)
         {
+            var color = ColorToBrush(strings[0].fcolor);
             TextBlock outer = new()
             {
                 FontSize = fontsize,
+                Foreground = color,
                 FontFamily = fontFamily,
+                Width = right - left,
+                TextWrapping = TextWrapping.WrapWithOverflow
             };
             outer.Inlines = new InlineCollection();
             foreach(var fs in strings)
@@ -128,9 +138,9 @@ namespace PolyAxisGraphs_Avalonia.Views
                 {
                     Run run = new()
                     {
-                        FontSize = fontsize,
+                        FontSize = fontsize-2,
                         FontFamily = fontFamily,
-                        BaselineAlignment = BaselineAlignment.Superscript,
+                        BaselineAlignment = BaselineAlignment.Top,
                         Text = fs.function
                     };
                     outer.Inlines.Add(run);
@@ -141,7 +151,7 @@ namespace PolyAxisGraphs_Avalonia.Views
                     {
                         FontSize = fontsize,
                         FontFamily = fontFamily,
-                        BaselineAlignment = BaselineAlignment.Baseline,
+                        BaselineAlignment = BaselineAlignment.Center,
                         Text = fs.function
                     };
                     outer.Inlines.Add(run);
@@ -150,6 +160,7 @@ namespace PolyAxisGraphs_Avalonia.Views
             Canvas.SetLeft(outer, left);
             Canvas.SetTop(outer, top);
             Canvas.SetBottom(outer, bottom);
+            Canvas.SetRight(outer, right);
             canvas.Children.Add(outer);
         }
 

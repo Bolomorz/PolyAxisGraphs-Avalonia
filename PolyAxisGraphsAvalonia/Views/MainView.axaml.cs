@@ -30,6 +30,10 @@ public partial class MainView : UserControl
         }
     }
 
+    private void MouseMoveOnCanvas(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    {
+    }
+
     private async void OpenFileButtonClick(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
         var toplevel = TopLevel.GetTopLevel(this);
