@@ -6,7 +6,7 @@ initialdirectory=..\..\..\DataFiles\
 #default language, language file of default language
 defaultlanguage=..\..\..\LanguageFiles\EN.lng
 #
-controlfontsize=9
+controlfontsize=15
 chartfontsize=10
 charttitlefontsize=20
 fontfamily=Consolas

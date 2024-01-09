@@ -1,5 +1,6 @@
 ﻿using Avalonia.Controls;
 using Avalonia.Platform.Storage;
+using MathNet.Numerics;
 
 namespace PolyAxisGraphs_Avalonia.Views;
 
@@ -81,15 +82,20 @@ public partial class MainView : UserControl
 
     private void Canvas_PointerMoved(object? sender, Avalonia.Input.PointerEventArgs e)
     {
-        if(cg.gde is null) TBPos.Text = string.Empty;
+        if(cg.gde is null) TBPos.Text = "no data to display";
         else
         {
             var pointerpoint = e.GetCurrentPoint(MainCanvas);
             var canvaspoint = pointerpoint.Position;
-            var data = cg.gde.TranslateChartPointToSeriesPoint(new PolyAxisGraphs_Backend.GraphDrawingElements.Point() { x = canvaspoint.X, y = canvaspoint.Y });
+            var data = cg.gde.TranslateChartPointToSeriesPoint(new PolyAxisGraphs_Backend.GraphDrawingElements.PointRange() { center = new PolyAxisGraphs_Backend.GraphDrawingElements.Point() { x = canvaspoint.X, y = canvaspoint.Y }, range = 10 });
             if(data is not null)
             {
-                
+                var dt = (PolyAxisGraphs_Backend.GraphDrawingElements.SeriesData)data;
+                TBPos.Text = string.Format("SeriesPoint: {0} (x={1} [{3}]| y={2} [{0}])", dt.series.name, System.Math.Round(dt.seriespoint.x, dt.series.precision), System.Math.Round(dt.seriespoint.y, dt.series.precision), cg.pag.xaxisname);
+            }
+            else
+            {
+                TBPos.Text = "no seriespoint";
             }
         }
     }

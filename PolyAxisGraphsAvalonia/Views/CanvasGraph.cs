@@ -141,7 +141,7 @@ namespace PolyAxisGraphs_Avalonia.Views
                 {
                     Run run = new()
                     {
-                        FontSize = fontsize-2,
+                        FontSize = fontsize * 2/3,
                         FontFamily = fontFamily,
                         BaselineAlignment = BaselineAlignment.Top,
                         Text = fs.function
