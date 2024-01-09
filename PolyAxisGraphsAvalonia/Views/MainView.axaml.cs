@@ -13,6 +13,7 @@ public partial class MainView : UserControl
         InitializeComponent();
         cg = new CanvasGraph(MainCanvas);
         LoadControls();
+        DataContext = this;
     }
 
     public void LoadControls()
@@ -27,11 +28,9 @@ public partial class MainView : UserControl
             BTOpenFile.FontFamily = fontfamily;
             BTOpenFile.FontSize = (double)fontsize;
             BTOpenFile.Content = cg.pag.settings.currentlang.FindElement("btopenfile");
+            TBPos.FontFamily = fontfamily;
+            TBPos.FontSize = (double)fontsize;
         }
-    }
-
-    private void MouseMoveOnCanvas(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
-    {
     }
 
     private async void OpenFileButtonClick(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
@@ -78,5 +77,20 @@ public partial class MainView : UserControl
     private void OpenSettingsButtonClick(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
 
+    }
+
+    private void Canvas_PointerMoved(object? sender, Avalonia.Input.PointerEventArgs e)
+    {
+        if(cg.gde is null) TBPos.Text = string.Empty;
+        else
+        {
+            var pointerpoint = e.GetCurrentPoint(MainCanvas);
+            var canvaspoint = pointerpoint.Position;
+            var data = cg.gde.TranslateChartPointToSeriesPoint(new PolyAxisGraphs_Backend.GraphDrawingElements.Point() { x = canvaspoint.X, y = canvaspoint.Y });
+            if(data is not null)
+            {
+                
+            }
+        }
     }
 }

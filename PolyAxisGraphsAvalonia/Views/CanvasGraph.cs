@@ -18,11 +18,13 @@ namespace PolyAxisGraphs_Avalonia.Views
     {
         public PolyAxisGraph pag { get; set; }
         Canvas canvas { get; set; }
+        public GraphDrawingElements? gde { get; set; }
 
         public CanvasGraph(Canvas _canvas)
         {
             canvas = _canvas;
             pag = new PolyAxisGraph(new Settings(@"..\..\..\Settings.txt"));
+            gde = null;
         }
 
         public static Avalonia.Media.ISolidColorBrush ColorToBrush(System.Drawing.Color color)
@@ -40,10 +42,11 @@ namespace PolyAxisGraphs_Avalonia.Views
         {
             pag.SetFilePath(datafile);
             pag.ReadData();
-            DrawGDE(new GraphDrawingElements(canvas.Width, canvas.Height, pag));
+            gde = new GraphDrawingElements(canvas.Width, canvas.Height, pag);
+            DrawGDE();
         }
 
-        public void DrawGDE(GraphDrawingElements gde)
+        public void DrawGDE()
         {
             canvas.Children.Clear();
             FontFamily ff = (pag.settings.fontfamily is null) ? new FontFamily("Consolas") : new FontFamily(pag.settings.fontfamily);
