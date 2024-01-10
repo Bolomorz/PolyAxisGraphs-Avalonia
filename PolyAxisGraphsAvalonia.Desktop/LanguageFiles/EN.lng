@@ -7,10 +7,12 @@
 #
 #Button bt
 btopenfile=...
+btsavefile=save file
 #Label lb
 #
 #TextBox tb
 tbopenfile=open data file
+tbentertitle=enter chart title here...
 #
 #CheckBox cb
 #

@@ -33,6 +33,13 @@ namespace PolyAxisGraphs_Avalonia.Views
             return new SolidColorBrush(amcolor);
         }
 
+        public void SetTitle(string title, double fontsize)
+        {
+            pag.charttitle = title;
+            gde = new GraphDrawingElements(canvas.Width, canvas.Height, pag);
+            DrawGDE();
+        }
+
         public void SetLanguage(string lngfile)
         {
             pag.SetLanguage(lngfile);
@@ -48,6 +55,7 @@ namespace PolyAxisGraphs_Avalonia.Views
 
         public void DrawGDE()
         {
+            if (gde is null) return;
             canvas.Children.Clear();
             FontFamily ff = (pag.settings.fontfamily is null) ? new FontFamily("Consolas") : new FontFamily(pag.settings.fontfamily);
             double fontsize = (pag.settings.chartfontsize is null) ? 10 : (double)pag.settings.chartfontsize;
