@@ -64,7 +64,7 @@ public partial class MainView : UserControl
             BTXaxis.Content = "x: " + cg.pag.xaxisname;
             BTXaxis.FontFamily = fontfamily;
             BTXaxis.FontSize = (double)fontsize;
-            BTXaxis.Command = ReactiveCommand.Create(() => { XAxisButtonClick(); });
+            BTXaxis.Command = ReactiveCommand.Create(XAxisButtonClick);
             BTXaxis.HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Center;
             BTXaxis.VerticalAlignment = Avalonia.Layout.VerticalAlignment.Center;
             Grid.SetColumn(BTXaxis, 1);
@@ -120,7 +120,7 @@ public partial class MainView : UserControl
     {
         if (sender is not null) {
             TextBox tb = (TextBox)sender;
-            if (tb.Text is not null) cg.SetTitle(tb.Text, (cg.pag.settings.charttitlefontsize is null) ? 20 : (double)cg.pag.settings.charttitlefontsize);
+            if (tb.Text is not null) cg.SetTitle(tb.Text);
         }
     }
 
@@ -128,7 +128,7 @@ public partial class MainView : UserControl
     {
         var toplevel = TopLevel.GetTopLevel(this);
         if (toplevel is null) return;
-        if (cg.pag.settings.initialdirectory is null)
+        if (cg.pag.settings.initialdirectory is null || cg.pag.settings.initialdirectory.Length == 0)
         {
             var files = await toplevel.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
             {
@@ -176,7 +176,7 @@ public partial class MainView : UserControl
     {
         var toplevel = TopLevel.GetTopLevel(this);
         if (toplevel is null) return;
-        if(cg.pag.settings.initialdirectory is null)
+        if(cg.pag.settings.initialdirectory is null || cg.pag.settings.initialdirectory.Length == 0)
         {
             var file = await toplevel.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
             {
@@ -188,8 +188,12 @@ public partial class MainView : UserControl
 
             if(file is not null)
             {
-                PixelSize size = new PixelSize((int)MainCanvas.Width, (int)MainCanvas.Height);
-                RenderTargetBitmap rtb = new RenderTargetBitmap(size);
+                PixelSize psize = new((int)MainCanvas.Width, (int)MainCanvas.Height);
+                Size size = new(MainCanvas.Width, MainCanvas.Height);
+                Vector dpi = new(96, 96);
+                RenderTargetBitmap rtb = new RenderTargetBitmap(psize, dpi);
+                MainCanvas.Measure(size);
+                MainCanvas.Arrange(new Rect(size));
                 rtb.Render(MainCanvas);
                 rtb.Save(file.Path.AbsolutePath);
             }

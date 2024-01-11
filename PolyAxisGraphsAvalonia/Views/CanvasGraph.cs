@@ -33,7 +33,7 @@ namespace PolyAxisGraphs_Avalonia.Views
             return new SolidColorBrush(amcolor);
         }
 
-        public void SetTitle(string title, double fontsize)
+        public void SetTitle(string title)
         {
             pag.charttitle = title;
             gde = new GraphDrawingElements(canvas.Width, canvas.Height, pag);
