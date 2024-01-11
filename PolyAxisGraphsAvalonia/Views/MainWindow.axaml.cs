@@ -1,6 +1,6 @@
 ﻿using Avalonia.Controls;
 
-namespace PolyAxisGraphs_Avalonia.Views;
+namespace PolyAxisGraphsAvalonia.Views;
 
 public partial class MainWindow : Window
 {

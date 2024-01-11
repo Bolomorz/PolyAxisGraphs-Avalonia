@@ -1,4 +1,4 @@
-﻿namespace PolyAxisGraphs_Avalonia.ViewModels;
+﻿namespace PolyAxisGraphsAvalonia.ViewModels;
 
 public class MainViewModel : ViewModelBase
 {

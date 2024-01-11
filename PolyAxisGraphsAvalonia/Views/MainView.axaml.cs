@@ -9,7 +9,7 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 using ReactiveUI;
 using System.Diagnostics;
 
-namespace PolyAxisGraphs_Avalonia.Views;
+namespace PolyAxisGraphsAvalonia.Views;
 
 public partial class MainView : UserControl
 {
@@ -227,7 +227,10 @@ public partial class MainView : UserControl
 
     private void XAxisButtonClick()
     {
-
+        SettingsWindow settingsWindow = new SettingsWindow()
+        {
+            
+        };
     }
 
     private void YAxisButtonClick(PolyAxisGraphs_Backend.Series series)

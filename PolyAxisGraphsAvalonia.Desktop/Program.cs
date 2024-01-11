@@ -3,7 +3,7 @@
 using Avalonia;
 using Avalonia.ReactiveUI;
 
-namespace PolyAxisGraphs_Avalonia.Desktop;
+namespace PolyAxisGraphsAvalonia.Desktop;
 
 class Program
 {

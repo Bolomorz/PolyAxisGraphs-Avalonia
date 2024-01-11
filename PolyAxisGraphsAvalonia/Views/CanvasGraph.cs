@@ -12,7 +12,7 @@ using PolyAxisGraphs_Backend;
 using System.Diagnostics;
 using Avalonia.Controls.Documents;
 
-namespace PolyAxisGraphs_Avalonia.Views
+namespace PolyAxisGraphsAvalonia.Views
 {
     internal class CanvasGraph
     {

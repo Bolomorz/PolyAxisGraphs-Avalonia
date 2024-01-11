@@ -1,6 +1,6 @@
 ﻿using ReactiveUI;
 
-namespace PolyAxisGraphs_Avalonia.ViewModels;
+namespace PolyAxisGraphsAvalonia.ViewModels;
 
 public class ViewModelBase : ReactiveObject
 {

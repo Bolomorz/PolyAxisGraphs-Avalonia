@@ -2,10 +2,10 @@
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
 
-using PolyAxisGraphs_Avalonia.ViewModels;
-using PolyAxisGraphs_Avalonia.Views;
+using PolyAxisGraphsAvalonia.ViewModels;
+using PolyAxisGraphsAvalonia.Views;
 
-namespace PolyAxisGraphs_Avalonia;
+namespace PolyAxisGraphsAvalonia;
 
 public partial class App : Application
 {
