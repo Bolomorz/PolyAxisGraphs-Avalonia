@@ -19,9 +19,7 @@
 	    <Border BorderThickness="1" BorderBrush="Gainsboro" Grid.Column="1" Grid.Row="2" Grid.ColumnSpan="3" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="5">
 	        <TextBlock x:Name="TBPos"/>
         </Border>
-		<Grid x:Name="ControlsGrid" Grid.Column="0" Grid.ColumnSpan="4" Grid.Row="1" Grid.RowSpan="1" ShowGridLines="True" ColumnDefinitions="*,*,*,*,*,*,*,*" RowDefinitions="*,*" Margin="5">
-			
-		</Grid>
+		<Grid x:Name="ControlsGrid" Grid.Column="0" Grid.ColumnSpan="4" Grid.Row="1" Grid.RowSpan="1" ShowGridLines="True" ColumnDefinitions="*,*,*,*,*,*,*,*" RowDefinitions="*,*" Margin="5"/>
     </Grid>
 </ScrollViewer>
 </UserControl>
