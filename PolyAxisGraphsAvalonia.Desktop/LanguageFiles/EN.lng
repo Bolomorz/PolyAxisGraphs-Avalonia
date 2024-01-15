@@ -8,11 +8,16 @@
 #Button bt
 btopenfile=...
 btsavefile=save file
-#Label lb
-#
+btapply=apply
+btdiscard=discard
+btreset=reset
 #TextBox tb
 tbopenfile=open data file
 tbentertitle=enter chart title here...
+tbtitlesettingsx=settings x axis
+tbnamesettingsx=name of x axis
+tbminvalue=min value
+tbmaxvalue=max value
 #
 #CheckBox cb
 #

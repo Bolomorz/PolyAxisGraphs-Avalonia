@@ -7,7 +7,10 @@ namespace PolyAxisGraphsAvalonia.Views
         public SettingsWindow(UserControl view)
         {
             Content = view;
+            this.Width = view.Width;
+            this.Height = view.Height;
             InitializeComponent();
         }
+
     }
 }

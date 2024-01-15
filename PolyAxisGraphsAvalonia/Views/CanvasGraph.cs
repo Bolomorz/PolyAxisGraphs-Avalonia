@@ -14,7 +14,7 @@ using Avalonia.Controls.Documents;
 
 namespace PolyAxisGraphsAvalonia.Views
 {
-    internal class CanvasGraph
+    public class CanvasGraph
     {
         public PolyAxisGraph pag { get; set; }
         Canvas canvas { get; set; }

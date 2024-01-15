@@ -227,7 +227,7 @@ public partial class MainView : UserControl
 
     private void XAxisButtonClick()
     {
-        SettingsWindow settings = new SettingsWindow(new XAxisSettingsView());
+        SettingsWindow settings = new SettingsWindow(new XAxisSettingsView(cg));
         settings.Show();
     }
 
