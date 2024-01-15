@@ -227,15 +227,14 @@ public partial class MainView : UserControl
 
     private void XAxisButtonClick()
     {
-        SettingsWindow settingsWindow = new SettingsWindow()
-        {
-            
-        };
+        SettingsWindow settings = new SettingsWindow(new XAxisSettingsView());
+        settings.Show();
     }
 
     private void YAxisButtonClick(PolyAxisGraphs_Backend.Series series)
     {
-
+        SettingsWindow settings = new SettingsWindow(new YAxisSettingsView(series));
+        settings.Show();
     }
 
     private void Canvas_PointerMoved(object? sender, Avalonia.Input.PointerEventArgs e)

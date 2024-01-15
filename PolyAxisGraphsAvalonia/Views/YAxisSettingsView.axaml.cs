@@ -4,7 +4,7 @@ namespace PolyAxisGraphsAvalonia.Views
 {
     public partial class YAxisSettingsView : UserControl
     {
-        public YAxisSettingsView()
+        public YAxisSettingsView(PolyAxisGraphs_Backend.Series series)
         {
             InitializeComponent();
         }

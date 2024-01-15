@@ -8,8 +8,4 @@
         x:Class="PolyAxisGraphsAvalonia.Views.SettingsWindow"
 		Icon="/Assets/avalonia-logo.ico"
         Title="Settings">
-	<StackPanel>
-	<views:YAxisSettingsView />
-	<views:XAxisSettingsView />
-	</StackPanel>
 </Window>

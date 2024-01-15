@@ -4,8 +4,9 @@ namespace PolyAxisGraphsAvalonia.Views
 {
     public partial class SettingsWindow : Window
     {
-        public SettingsWindow()
+        public SettingsWindow(UserControl view)
         {
+            Content = view;
             InitializeComponent();
         }
     }
