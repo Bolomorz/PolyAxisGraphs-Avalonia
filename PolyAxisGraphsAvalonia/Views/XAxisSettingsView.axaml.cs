@@ -28,7 +28,7 @@ namespace PolyAxisGraphsAvalonia.Views
                 var ff = new Avalonia.Media.FontFamily(cg.pag.settings.fontfamily);
                 var fs = cg.pag.settings.controlfontsize;
 
-                var controlheight = this.Height / 5 - 10;
+                var controlheight = this.Height / controlcount - 10;
                 var controlwidth = this.Width / 4;
 
                 tbltitle.FontFamily = ff;
@@ -92,6 +92,7 @@ namespace PolyAxisGraphsAvalonia.Views
             if (tbomax.Text is not null) cg.pag.x2 = PolyAxisGraphs_Backend.PolyAxisGraph.ReadStringToInt(tbomax.Text);
             if (Parent is not null)
             {
+                cg.ReDraw();
                 SettingsWindow sw = (SettingsWindow)Parent;
                 sw.Close();
             }

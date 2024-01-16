@@ -21,7 +21,7 @@ public partial class MainView : UserControl
     public MainView()
     {
         InitializeComponent();
-        cg = new CanvasGraph(MainCanvas);
+        cg = new CanvasGraph(MainCanvas, this);
         LoadControls();
         DataContext = this;
     }
@@ -43,7 +43,7 @@ public partial class MainView : UserControl
         }
     }
 
-    private void CreateControls()
+    public void CreateControls()
     {
         ControlsGrid.Children.Clear();
         var fontfamily = (cg.pag.settings.fontfamily is null) ? new Avalonia.Media.FontFamily("Consolas") : new Avalonia.Media.FontFamily(cg.pag.settings.fontfamily);
@@ -142,7 +142,6 @@ public partial class MainView : UserControl
                 string file = files[0].Path.AbsolutePath;
                 TBFile.Text = file;
                 cg.SetFile(file);
-                CreateControls();
             }
         }
         else
@@ -162,7 +161,6 @@ public partial class MainView : UserControl
                 string file = files[0].Path.AbsolutePath;
                 TBFile.Text = file;
                 cg.SetFile(file);
-                CreateControls();
             }
         }
     }
@@ -233,7 +231,7 @@ public partial class MainView : UserControl
 
     private void YAxisButtonClick(PolyAxisGraphs_Backend.Series series)
     {
-        SettingsWindow settings = new SettingsWindow(new YAxisSettingsView(series));
+        SettingsWindow settings = new SettingsWindow(new YAxisSettingsView(series, cg));
         settings.Show();
     }
 

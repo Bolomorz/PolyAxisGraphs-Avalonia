@@ -7,6 +7,6 @@
         mc:Ignorable="d" d:DesignWidth="1800" d:DesignHeight="800"
         x:Class="PolyAxisGraphsAvalonia.Views.MainWindow"
         Icon="/Assets/avalonia-logo.ico"
-        Title="PolyAxisGraphsAvalonia">
+        Title="PolyAxisGraphsAvalonia" Width="1800" Height="800">
         <views:MainView />
 </Window>

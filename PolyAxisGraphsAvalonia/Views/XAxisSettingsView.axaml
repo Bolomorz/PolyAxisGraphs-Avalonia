@@ -11,7 +11,7 @@
          to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
 		<vm:XAxisSettingsViewModel/>
 	</Design.DataContext>
-	<Border BorderThickness="1" BorderBrush="Gainsboro">
+	<Border BorderThickness="1" BorderBrush="Black">
 	<Grid x:Name="MainGrid" ShowGridLines="False" ColumnDefinitions="*,*,*,*" RowDefinitions="*,*,*,*,*">
 		<Border BorderThickness="1" BorderBrush="Black" Background="Gainsboro" Grid.Column="0" Grid.ColumnSpan="4" Grid.Row="0">
 		<TextBlock x:Name="tbltitle" TextWrapping="WrapWithOverflow" HorizontalAlignment="Center" VerticalAlignment="Center"/>

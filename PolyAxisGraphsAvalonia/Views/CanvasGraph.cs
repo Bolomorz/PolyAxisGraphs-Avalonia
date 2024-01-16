@@ -19,12 +19,14 @@ namespace PolyAxisGraphsAvalonia.Views
         public PolyAxisGraph pag { get; set; }
         Canvas canvas { get; set; }
         public GraphDrawingElements? gde { get; set; }
+        MainView mw { get; set; }
 
-        public CanvasGraph(Canvas _canvas)
+        public CanvasGraph(Canvas _canvas, MainView _mw)
         {
             canvas = _canvas;
             pag = new PolyAxisGraph(new Settings(@"..\..\..\Settings.txt"));
             gde = null;
+            mw = _mw;
         }
 
         public static Avalonia.Media.ISolidColorBrush ColorToBrush(System.Drawing.Color color)
@@ -53,7 +55,13 @@ namespace PolyAxisGraphsAvalonia.Views
             DrawGDE();
         }
 
-        public void DrawGDE()
+        public void ReDraw()
+        {
+            gde = new GraphDrawingElements(canvas.Width, canvas.Height, pag);
+            DrawGDE();
+        }
+
+        private void DrawGDE()
         {
             if (gde is null) return;
             canvas.Children.Clear();
@@ -98,6 +106,7 @@ namespace PolyAxisGraphsAvalonia.Views
                     }
                 }
             }
+            mw.CreateControls();
         }
 
         private void DrawLine(Avalonia.Point start, Avalonia.Point end, Avalonia.Media.ISolidColorBrush brush, double thickness)
