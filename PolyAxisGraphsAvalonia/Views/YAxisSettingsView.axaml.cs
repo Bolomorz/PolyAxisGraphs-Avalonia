@@ -44,8 +44,8 @@ namespace PolyAxisGraphsAvalonia.Views
 
                 btfunc.FontFamily = ff;
                 btfunc.FontSize = (int)fs;
-                btfunc.Content = (series.rft == PolyAxisGraphs_Backend.Regression.FunctionType.NaF) ? cg.pag.settings.currentlang.FindElement("btfuncnotset") : cg.pag.settings.currentlang.FindElement("btfuncset");
-                btfunc.Background = (series.rft == PolyAxisGraphs_Backend.Regression.FunctionType.NaF) ? Brushes.Red : Brushes.Green;
+                btfunc.Content = (series.showfunction) ? cg.pag.settings.currentlang.FindElement("btfuncactive") : cg.pag.settings.currentlang.FindElement("btfuncnotactive");
+                btfunc.Background = (series.showfunction) ? Brushes.Green : Brushes.Red;
 
                 tblname.FontFamily = ff;
                 tblname.FontSize = (int)fs;
@@ -57,6 +57,11 @@ namespace PolyAxisGraphsAvalonia.Views
                 tboname.Text = series.name;
                 tboname.Width = controlwidth * 3 - 10;
                 tboname.Height = controlheight;
+
+                cbseries.FontFamily = ff;
+                cbseries.FontSize = (int)fs;
+                cbseries.Content = cg.pag.settings.currentlang.FindElement("cbseries");
+                cbseries.IsChecked = (series.active) ? true : false;
 
                 tblcolor.FontFamily = ff;
                 tblcolor.FontSize = (int)fs;
@@ -111,7 +116,10 @@ namespace PolyAxisGraphsAvalonia.Views
             if(Parent is not null)
             {
                 SettingsWindow sw = (SettingsWindow)Parent;
-                sw.Content = new RegressionSettingsView(series, cg);
+                var view = new RegressionSettingsView(series, cg);
+                sw.Content = view;
+                sw.Width = view.Width;
+                sw.Height = view.Height;
             }
         }
 
@@ -121,6 +129,7 @@ namespace PolyAxisGraphsAvalonia.Views
             if (tbomin.Text is not null) series.SetMin(PolyAxisGraphs_Backend.PolyAxisGraph.ReadStringToDouble(tbomin.Text));
             if (tbomax.Text is not null) series.SetMax(PolyAxisGraphs_Backend.PolyAxisGraph.ReadStringToDouble(tbomax.Text));
             if (tbocolor.Text is not null) series.color = System.Drawing.Color.FromName(tbocolor.Text);
+            series.active = (cbseries.IsChecked is null) ? true : (bool)cbseries.IsChecked;
             if (Parent is not null)
             {
                 cg.ReDraw();

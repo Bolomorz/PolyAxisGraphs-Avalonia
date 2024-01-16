@@ -11,20 +11,34 @@ btsavefile=save file
 btapply=apply
 btdiscard=discard
 btreset=reset
-btfuncset=regression function (set)
-btfuncnotset=regression function (not set)
+btreturn=return
+btcalc=calculate
+btfuncactive=regression function (active)
+btfuncnotactive=regression function (not active)
+#
 #TextBox tb
 tbopenfile=open data file
 tbentertitle=enter chart title here
 tbtitlesettingsx=settings x axis
 tbtitlesettingsy=settings y series
+tbtitlesettingss=settings for current function
+tbtitlesettingsfunc=settings regression function for
+tbtitlesettingscurrent=current function
+tbtitlesettingscreate=calculate function
 tbnamesettingsx=name of x axis
 tbnamesettingsy=name of y series
 tbcolorsettingsy=color of series
 tbminvalue=min value
 tbmaxvalue=max value
+tbfunction=function
+tbftype=function type
+tbprecision=precision (decimal places)
+tborder=order
+tbselect=select type
 #
 #CheckBox cb
+cbseries=show series
+cbfunc=show function
 #
 #ListBox lb
 #

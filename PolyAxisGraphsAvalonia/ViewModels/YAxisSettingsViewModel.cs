@@ -2,5 +2,6 @@
 {
     public class YAxisSettingsViewModel : ViewModelBase
     {
+        public YAxisSettingsViewModel() { }
     }
 }
