@@ -1,6 +1,7 @@
 using Avalonia.Controls;
 using Avalonia.Media;
 using Avalonia.Media.Imaging;
+using System;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace PolyAxisGraphsAvalonia.Views
@@ -18,6 +19,11 @@ namespace PolyAxisGraphsAvalonia.Views
         {
             cg = _cg;
             series = _series;
+            if (cg.pag is null)
+            {
+                ErrorWindow.Show("error: pag is null -> settings file not found");
+                return;
+            }
             this.Width = width;
             this.Height = (cg.pag.settings.controlfontsize is null) ? 15 * heightfactor * controlcount : heightfactor * controlcount * (double)cg.pag.settings.controlfontsize;
             InitializeComponent();
@@ -28,6 +34,11 @@ namespace PolyAxisGraphsAvalonia.Views
 
         private void LoadControls()
         {
+            if (cg.pag is null)
+            {
+                ErrorWindow.Show("error: pag is null -> settings file not found");
+                return;
+            }
             if (cg.pag.settings.fontfamily is not null && cg.pag.settings.controlfontsize is not null && cg.pag.settings.currentlang is not null)
             {
                 var ff = new Avalonia.Media.FontFamily(cg.pag.settings.fontfamily);
@@ -109,32 +120,61 @@ namespace PolyAxisGraphsAvalonia.Views
                 btdiscard.FontSize = (int)fs;
                 btdiscard.Content = cg.pag.settings.currentlang.FindElement("btdiscard");
             }
+            else
+            {
+                ErrorWindow.Show(string.Format("error: failed to load: settings variable is null.\nfontfamily={0}\ncontrolfontsize={1}\ncurrentlang={2}\nfilepath={3}",
+                    cg.pag.settings.fontfamily, cg.pag.settings.controlfontsize, cg.pag.settings.currentlang, cg.pag.settings.file));
+            }
         }
 
         private void ClickFunc(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
         {
             if(Parent is not null)
             {
-                SettingsWindow sw = (SettingsWindow)Parent;
-                var view = new RegressionSettingsView(series, cg);
-                sw.Content = view;
-                sw.Width = view.Width;
-                sw.Height = view.Height;
+                try
+                {
+                    SettingsWindow sw = (SettingsWindow)Parent;
+                    var view = new RegressionSettingsView(series, cg);
+                    sw.Content = view;
+                    sw.Width = view.Width;
+                    sw.Height = view.Height;
+                    sw.MaxWidth = view.Width;
+                    sw.MaxHeight = view.Height;
+                }
+                catch (Exception ex)
+                {
+                    ErrorWindow.Show(ex.ToString());
+                }
+            }
+            else
+            {
+                ErrorWindow.Show("error: parent window of view yaxissettingsview is null");
             }
         }
 
         private void ClickApply(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
         {
-            if (tboname.Text is not null) series.name = tboname.Text;
-            if (tbomin.Text is not null) series.SetMin(PolyAxisGraphs_Backend.PolyAxisGraph.ReadStringToDouble(tbomin.Text));
-            if (tbomax.Text is not null) series.SetMax(PolyAxisGraphs_Backend.PolyAxisGraph.ReadStringToDouble(tbomax.Text));
-            if (tbocolor.Text is not null) series.color = System.Drawing.Color.FromName(tbocolor.Text);
+            if (tboname.Text is not null) series.name = tboname.Text; else ErrorWindow.Show("error: tboname.Text of view yaxissettingsview is null");
+            if (tbomin.Text is not null) series.SetMin(PolyAxisGraphs_Backend.PolyAxisGraph.ReadStringToDouble(tbomin.Text)); else ErrorWindow.Show("error: tbomin.Text of view yaxissettingsview is null");
+            if (tbomax.Text is not null) series.SetMax(PolyAxisGraphs_Backend.PolyAxisGraph.ReadStringToDouble(tbomax.Text)); else ErrorWindow.Show("error: tbomax.Text of view yaxissettingsview is null");
+            if (tbocolor.Text is not null) series.color = System.Drawing.Color.FromName(tbocolor.Text); else ErrorWindow.Show("error: tbocolor.Text of view yaxissettingsview is null");
             series.active = (cbseries.IsChecked is null) ? true : (bool)cbseries.IsChecked;
             if (Parent is not null)
             {
-                cg.ReDraw();
-                SettingsWindow sw = (SettingsWindow)Parent;
-                sw.Close();
+                try
+                {
+                    cg.ReDraw();
+                    SettingsWindow sw = (SettingsWindow)Parent;
+                    sw.Close();
+                }
+                catch (Exception ex)
+                {
+                    ErrorWindow.Show(ex.ToString());
+                }
+            }
+            else
+            {
+                ErrorWindow.Show("error: parent window of view yaxissettingsview is null");
             }
         }
 
@@ -142,8 +182,19 @@ namespace PolyAxisGraphsAvalonia.Views
         {
             if (Parent is not null)
             {
-                SettingsWindow sw = (SettingsWindow)Parent;
-                sw.Close();
+                try
+                {
+                    SettingsWindow sw = (SettingsWindow)Parent;
+                    sw.Close();
+                }
+                catch (Exception ex)
+                {
+                    ErrorWindow.Show(ex.ToString());
+                }
+            }
+            else
+            {
+                ErrorWindow.Show("error: parent window of view yaxissettingsview is null");
             }
         }
 

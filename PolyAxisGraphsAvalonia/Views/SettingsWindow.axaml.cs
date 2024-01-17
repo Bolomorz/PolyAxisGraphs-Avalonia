@@ -9,6 +9,8 @@ namespace PolyAxisGraphsAvalonia.Views
             Content = view;
             this.Width = view.Width;
             this.Height = view.Height;
+            this.MaxWidth = view.Width;
+            this.MaxHeight = view.Height;
             InitializeComponent();
         }
 

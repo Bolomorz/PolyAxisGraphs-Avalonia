@@ -28,6 +28,11 @@ public partial class MainView : UserControl
 
     public void LoadControls()
     {
+        if (cg.pag is null)
+        {
+            ErrorWindow.Show("error: pag is null -> settings file not found");
+            return;
+        }
         if (cg.pag.settings.fontfamily is not null && cg.pag.settings.controlfontsize is not null && cg.pag.settings.currentlang is not null)
         {
             var fontfamily = new Avalonia.Media.FontFamily(cg.pag.settings.fontfamily);
@@ -41,16 +46,27 @@ public partial class MainView : UserControl
             TBPos.FontFamily = fontfamily;
             TBPos.FontSize = (double)fontsize;
         }
+        else
+        {
+            ErrorWindow.Show(string.Format("error: failed to load: settings variable is null.\nfontfamily={0}\ncontrolfontsize={1}\ncurrentlang={2}\nfilepath={3}",
+                cg.pag.settings.fontfamily, cg.pag.settings.controlfontsize, cg.pag.settings.currentlang, cg.pag.settings.file));
+        }
     }
 
     public void CreateControls()
     {
+        if (cg.pag is null)
+        {
+            ErrorWindow.Show("error: pag is null -> settings file not found");
+            return;
+        }
         ControlsGrid.Children.Clear();
         var fontfamily = (cg.pag.settings.fontfamily is null) ? new Avalonia.Media.FontFamily("Consolas") : new Avalonia.Media.FontFamily(cg.pag.settings.fontfamily);
         var fontsize = (cg.pag.settings.controlfontsize is null) ? 15 : cg.pag.settings.controlfontsize;
+        PolyAxisGraphs_Backend.LanguagePack language = (cg.pag.settings.currentlang is null) ? PolyAxisGraphs_Backend.LanguagePack.EN : cg.pag.settings.currentlang;
         try {
             Button BTSave = new Button();
-            BTSave.Content = cg.pag.settings.currentlang.FindElement("btsavefile");
+            BTSave.Content = language.FindElement("btsavefilepng");
             BTSave.FontFamily = fontfamily;
             BTSave.FontSize = (double)fontsize;
             BTSave.Command = ReactiveCommand.Create(() => { SaveFileButtonClick(); });
@@ -72,7 +88,7 @@ public partial class MainView : UserControl
             ControlsGrid.Children.Add(BTXaxis);
 
             TextBox TBTitle = new TextBox();
-            TBTitle.Watermark = cg.pag.settings.currentlang.FindElement("tbentertitle");
+            TBTitle.Watermark = language.FindElement("tbentertitle");
             TBTitle.FontFamily = fontfamily;
             TBTitle.FontSize = (double)fontsize;
             TBTitle.Focusable = true;
@@ -120,12 +136,21 @@ public partial class MainView : UserControl
     {
         if (sender is not null) {
             TextBox tb = (TextBox)sender;
-            if (tb.Text is not null) cg.SetTitle(tb.Text);
+            if (tb.Text is not null) cg.SetTitle(tb.Text); else ErrorWindow.Show(string.Format("error: variable is null.\ntb.Text={0}", tb.Text));
+        }
+        else
+        {
+            ErrorWindow.Show("error: sender is null for TitleTextChanged.");
         }
     }
 
     private async void OpenFileButtonClick(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
+        if (cg.pag is null)
+        {
+            ErrorWindow.Show("error: pag is null -> settings file not found");
+            return;
+        }
         var toplevel = TopLevel.GetTopLevel(this);
         if (toplevel is null) return;
         if (cg.pag.settings.initialdirectory is null || cg.pag.settings.initialdirectory.Length == 0)
@@ -172,6 +197,11 @@ public partial class MainView : UserControl
 
     private async void SaveFileButtonClick()
     {
+        if (cg.pag is null)
+        {
+            ErrorWindow.Show("error: pag is null -> settings file not found");
+            return;
+        }
         var toplevel = TopLevel.GetTopLevel(this);
         if (toplevel is null) return;
         if(cg.pag.settings.initialdirectory is null || cg.pag.settings.initialdirectory.Length == 0)
@@ -237,7 +267,8 @@ public partial class MainView : UserControl
 
     private void Canvas_PointerMoved(object? sender, Avalonia.Input.PointerEventArgs e)
     {
-        if(cg.gde is null) TBPos.Text = "no data to display";
+        if (cg.gde is null) { TBPos.Text = "no data to display"; return; }
+        if (cg.pag is null) { ErrorWindow.Show("error: pag is null -> settings file not found"); return; }
         else
         {
             var pointerpoint = e.GetCurrentPoint(MainCanvas);

@@ -7,7 +7,7 @@
 #
 #Button bt
 btopenfile=...
-btsavefile=save file
+btsavefilepng=save as picture
 btapply=apply
 btdiscard=discard
 btreset=reset

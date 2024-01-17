@@ -18,6 +18,11 @@ namespace PolyAxisGraphsAvalonia.Views
         {
             series = _series;
             cg = _cg;
+            if (cg.pag is null)
+            {
+                ErrorWindow.Show("error: pag is null -> settings file not found");
+                return;
+            }
             this.Width = width;
             this.Height = (cg.pag.settings.controlfontsize is null) ? 15 * heightfactor * controlcount : heightfactor * controlcount * (double)cg.pag.settings.controlfontsize;
             InitializeComponent();
@@ -28,6 +33,11 @@ namespace PolyAxisGraphsAvalonia.Views
 
         private void LoadControls()
         {
+            if (cg.pag is null)
+            {
+                ErrorWindow.Show("error: pag is null -> settings file not found");
+                return;
+            }
             if (cg.pag.settings.fontfamily is not null && cg.pag.settings.controlfontsize is not null && cg.pag.settings.currentlang is not null)
             {
                 var ff = new Avalonia.Media.FontFamily(cg.pag.settings.fontfamily);
@@ -171,6 +181,11 @@ namespace PolyAxisGraphsAvalonia.Views
                 lbselecttype.Height = controlheight * 2 - 10;
                 lbselecttype.Width = controlwidth * 3 - 10;
             }
+            else
+            {
+                ErrorWindow.Show(string.Format("error: failed to load: settings variable is null.\nfontfamily={0}\ncontrolfontsize={1}\ncurrentlang={2}\nfilepath={3}",
+                    cg.pag.settings.fontfamily, cg.pag.settings.controlfontsize, cg.pag.settings.currentlang, cg.pag.settings.file));
+            }
         }
 
         private void CheckBoxIsCheckedChanged(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
@@ -189,6 +204,12 @@ namespace PolyAxisGraphsAvalonia.Views
                 sw.Content = view;
                 sw.Width = view.Width;
                 sw.Height = view.Height;
+                sw.MaxHeight = view.Height;
+                sw.MaxWidth = view.Width;
+            }
+            else
+            {
+                ErrorWindow.Show("error: parent window of view RegressionSettingsView is null");
             }
         }
 
@@ -200,14 +221,30 @@ namespace PolyAxisGraphsAvalonia.Views
 
         private void ClickCalculate(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
         {
-            if(tboorder.Text is not null && lbselecttype.SelectedItem is not null)
+            if (cg.pag is null)
             {
-                var order = PolyAxisGraph.ReadStringToInt(tboorder.Text);
-                var type = (Regression.FunctionType)lbselecttype.SelectedItem;
-                cg.pag.CalculateRegression(series, type, order);
-                series.showfunction = true;
-                LoadControls();
-                cg.ReDraw();
+                ErrorWindow.Show("error: pag is null -> settings file not found");
+                return;
+            }
+            if (tboorder.Text is not null && lbselecttype.SelectedItem is not null)
+            {
+                try
+                {
+                    var order = PolyAxisGraph.ReadStringToInt(tboorder.Text);
+                    var type = (Regression.FunctionType)lbselecttype.SelectedItem;
+                    cg.pag.CalculateRegression(series, type, order);
+                    series.showfunction = true;
+                    LoadControls();
+                    cg.ReDraw();
+                }
+                catch (System.Exception ex)
+                {
+                    ErrorWindow.Show(ex.ToString());
+                }
+            }
+            else
+            {
+                ErrorWindow.Show(string.Format("error: value is null.\ntboorder.Text={0}\nlbselecttype.SelectedItem={1}", tboorder.Text, lbselecttype.SelectedItem));
             }
         }
     }

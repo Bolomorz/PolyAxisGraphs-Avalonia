@@ -13,6 +13,11 @@ namespace PolyAxisGraphsAvalonia.Views
         public XAxisSettingsView(CanvasGraph _cg)
         {
             cg = _cg;
+            if (cg.pag is null)
+            {
+                ErrorWindow.Show("error: pag is null -> probably settings file not found");
+                return;
+            }
             this.Width = width;
             this.Height = (cg.pag.settings.controlfontsize is null) ? 15 * heightfactor * controlcount : heightfactor * controlcount * (double)cg.pag.settings.controlfontsize;
             InitializeComponent();
@@ -23,6 +28,11 @@ namespace PolyAxisGraphsAvalonia.Views
 
         private void LoadControls()
         {
+            if (cg.pag is null)
+            {
+                ErrorWindow.Show("error: pag is null -> settings file not found");
+                return;
+            }
             if (cg.pag.settings.fontfamily is not null && cg.pag.settings.controlfontsize is not null && cg.pag.settings.currentlang is not null)
             {
                 var ff = new Avalonia.Media.FontFamily(cg.pag.settings.fontfamily);
@@ -83,18 +93,32 @@ namespace PolyAxisGraphsAvalonia.Views
                 btdiscard.FontSize = (int)fs;
                 btdiscard.Content = cg.pag.settings.currentlang.FindElement("btdiscard");
             }
+            else
+            {
+                ErrorWindow.Show(string.Format("error: failed to load: settings variable is null.\nfontfamily={0}\ncontrolfontsize={1}\ncurrentlang={2}\nfilepath={3}",
+                    cg.pag.settings.fontfamily, cg.pag.settings.controlfontsize, cg.pag.settings.currentlang, cg.pag.settings.file));
+            }
         }
 
         private void ClickApply(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
         {
-            if (tboname.Text is not null) cg.pag.xaxisname = tboname.Text;
-            if (tbomin.Text is not null) cg.pag.x1 = PolyAxisGraphs_Backend.PolyAxisGraph.ReadStringToInt(tbomin.Text);
-            if (tbomax.Text is not null) cg.pag.x2 = PolyAxisGraphs_Backend.PolyAxisGraph.ReadStringToInt(tbomax.Text);
+            if (cg.pag is null)
+            {
+                ErrorWindow.Show("error: pag is null -> settings file not found");
+                return;
+            }
+            if (tboname.Text is not null) cg.pag.xaxisname = tboname.Text; else ErrorWindow.Show("error: tboname.Text is null in XAxisSettingsView");
+            if (tbomin.Text is not null) cg.pag.x1 = PolyAxisGraphs_Backend.PolyAxisGraph.ReadStringToInt(tbomin.Text); else ErrorWindow.Show("error: tbomin.Text is null in XAxisSettingsView");
+            if (tbomax.Text is not null) cg.pag.x2 = PolyAxisGraphs_Backend.PolyAxisGraph.ReadStringToInt(tbomax.Text); else ErrorWindow.Show("error: tbomax.Text is null in XAxisSettingsView");
             if (Parent is not null)
             {
                 cg.ReDraw();
                 SettingsWindow sw = (SettingsWindow)Parent;
                 sw.Close();
+            }
+            else
+            {
+                ErrorWindow.Show("error: parent window of view XAxisSettingsView is null");
             }
         }
 
@@ -105,15 +129,29 @@ namespace PolyAxisGraphsAvalonia.Views
                 SettingsWindow sw = (SettingsWindow)Parent;
                 sw.Close();
             }
+            else
+            {
+                ErrorWindow.Show("error: parent window of view XAxisSettingsView is null");
+            }
         }
 
         private void ClickResetMin(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
         {
+            if (cg.pag is null)
+            {
+                ErrorWindow.Show("error: pag is null -> settings file not found");
+                return;
+            }
             tbomin.Text = cg.pag.defx1.ToString();
         }
 
         private void ClickResetMax(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
         {
+            if (cg.pag is null)
+            {
+                ErrorWindow.Show("error: pag is null -> settings file not found");
+                return;
+            }
             tbomax.Text = cg.pag.defx2.ToString();
         }
     }

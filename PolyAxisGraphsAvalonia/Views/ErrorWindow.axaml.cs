@@ -1,4 +1,5 @@
 using Avalonia.Controls;
+using Avalonia.Interactivity;
 
 namespace PolyAxisGraphsAvalonia.Views
 {
@@ -9,12 +10,18 @@ namespace PolyAxisGraphsAvalonia.Views
             InitializeComponent();
         }
 
-        public static void Show(string errorcode, CanvasGraph cg)
+        public static void Show(string errormessage)
         {
             ErrorWindow window = new ErrorWindow();
+            window.Topmost = true;
             var tbmessage = window.FindControl<TextBlock>("tbmessage");
-            if (tbmessage is not null && cg.pag.settings.currentlang is not null) tbmessage.Text = cg.pag.settings.currentlang.FindElement("errorcode");
+            if (tbmessage is not null) tbmessage.Text = errormessage;
+            window.Show();
+        }
 
+        private void ClickOk(object? sender, RoutedEventArgs e)
+        {
+            this.Close();
         }
     }
 }

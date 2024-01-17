@@ -17,7 +17,7 @@ namespace PolyAxisGraphsAvalonia.Views
 {
     public class CanvasGraph
     {
-        public PolyAxisGraph pag { get; set; }
+        public PolyAxisGraph? pag { get; set; }
         Canvas canvas { get; set; }
         public GraphDrawingElements? gde { get; set; }
         MainView mw { get; set; }
@@ -25,7 +25,14 @@ namespace PolyAxisGraphsAvalonia.Views
         public CanvasGraph(Canvas _canvas, MainView _mw)
         {
             canvas = _canvas;
-            pag = new PolyAxisGraph(new Settings(@"..\..\..\Settings.txt"));
+            try
+            {
+                pag = new PolyAxisGraph(new Settings(@"..\..\..\Settings.ini"));
+            }
+            catch (Exception ex)
+            {
+                ErrorWindow.Show(ex.ToString());
+            }
             gde = null;
             mw = _mw;
         }
@@ -40,38 +47,74 @@ namespace PolyAxisGraphsAvalonia.Views
         {
             try
             {
+                if (pag is null)
+                {
+                    ErrorWindow.Show("error: pag is null -> probably settings file not found");
+                    return;
+                }
                 pag.charttitle = title;
                 var c = (TextBlock)canvas.Children[0];
                 c.Text = title;
             }
             catch (Exception ex)
             {
-                
+                ErrorWindow.Show(ex.ToString());
             }
         }
 
         public void SetLanguage(string lngfile)
         {
-            pag.SetLanguage(lngfile);
+            try
+            {
+                if (pag is null)
+                {
+                    ErrorWindow.Show("error: pag is null -> probably settings file not found");
+                    return;
+                }
+                pag.SetLanguage(lngfile);
+            }
+            catch (Exception ex)
+            {
+                ErrorWindow.Show(ex.ToString());
+            }
         }
 
         public void SetFile(string datafile)
         {
-            pag.SetFilePath(datafile);
-            pag.ReadData();
-            gde = new GraphDrawingElements(canvas.Width, canvas.Height, pag);
-            DrawGDE();
+            try
+            {
+                if (pag is null)
+                {
+                    ErrorWindow.Show("error: pag is null -> probably settings file not found");
+                    return;
+                }
+                pag.SetFilePath(datafile);
+                pag.ReadData();
+                gde = new GraphDrawingElements(canvas.Width, canvas.Height, pag);
+                DrawGDE();
+            }
+            catch (Exception ex)
+            {
+                ErrorWindow.Show(ex.ToString());
+            }
         }
 
         public void ReDraw()
         {
-            gde = new GraphDrawingElements(canvas.Width, canvas.Height, pag);
-            DrawGDE();
+            try
+            {
+                gde = new GraphDrawingElements(canvas.Width, canvas.Height, pag);
+                DrawGDE();
+            }
+            catch (Exception ex)
+            {
+                ErrorWindow.Show(ex.ToString());
+            }
         }
 
         private void DrawGDE()
         {
-            if (gde is null) return;
+            if (gde is null || pag is null) return;
             canvas.Children.Clear();
             FontFamily ff = (pag.settings.fontfamily is null) ? new FontFamily("Consolas") : new FontFamily(pag.settings.fontfamily);
             double fontsize = (pag.settings.chartfontsize is null) ? 10 : (double)pag.settings.chartfontsize;
