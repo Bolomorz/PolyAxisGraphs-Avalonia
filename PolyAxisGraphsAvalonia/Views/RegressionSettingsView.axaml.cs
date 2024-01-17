@@ -105,6 +105,7 @@ namespace PolyAxisGraphsAvalonia.Views
                 tbofunction.FontFamily = ff;
                 tbofunction.FontSize = (int)fs;
                 tbofunction.Inlines = new Avalonia.Controls.Documents.InlineCollection();
+                tbofunction.Inlines.Clear();
                 var strings = series.GetFunction();
                 foreach (var functionString in strings)
                 {
@@ -157,6 +158,18 @@ namespace PolyAxisGraphsAvalonia.Views
                 cbactive.Content = cg.pag.settings.currentlang.FindElement("cbfunc");
                 cbactive.IsChecked = series.showfunction;
 
+                lbselecttype.FontFamily = ff;
+                lbselecttype.FontSize = (int)fs;
+                lbselecttype.Items.Clear();
+                lbselecttype.Items.Add(PolyAxisGraphs_Backend.Regression.FunctionType.NaF);
+                lbselecttype.Items.Add(PolyAxisGraphs_Backend.Regression.FunctionType.Line);
+                lbselecttype.Items.Add(PolyAxisGraphs_Backend.Regression.FunctionType.Logarithm);
+                lbselecttype.Items.Add(PolyAxisGraphs_Backend.Regression.FunctionType.Polynomial);
+                lbselecttype.Items.Add(PolyAxisGraphs_Backend.Regression.FunctionType.Power);
+                lbselecttype.Items.Add(PolyAxisGraphs_Backend.Regression.FunctionType.Exponential);
+                lbselecttype.SelectedIndex = 0;
+                lbselecttype.Height = controlheight * 2 - 10;
+                lbselecttype.Width = controlwidth * 3 - 10;
             }
         }
 
@@ -165,6 +178,37 @@ namespace PolyAxisGraphsAvalonia.Views
             if(series.rft == Regression.FunctionType.NaF) series.showfunction = false;
             if (cbactive.IsChecked is null) series.showfunction = false;
             else series.showfunction = (bool)cbactive.IsChecked;
+        }
+
+        private void ClickReturn(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+        {
+            if (Parent is not null)
+            {
+                SettingsWindow sw = (SettingsWindow)Parent;
+                var view = new YAxisSettingsView(series, cg);
+                sw.Content = view;
+                sw.Width = view.Width;
+                sw.Height = view.Height;
+            }
+        }
+
+        private void ClickApplyPrecision(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+        {
+            if(tboprecision.Text is not null) series.precision = PolyAxisGraph.ReadStringToInt(tboprecision.Text);
+            LoadControls();
+        }
+
+        private void ClickCalculate(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+        {
+            if(tboorder.Text is not null && lbselecttype.SelectedItem is not null)
+            {
+                var order = PolyAxisGraph.ReadStringToInt(tboorder.Text);
+                var type = (Regression.FunctionType)lbselecttype.SelectedItem;
+                cg.pag.CalculateRegression(series, type, order);
+                series.showfunction = true;
+                LoadControls();
+                cg.ReDraw();
+            }
         }
     }
 }

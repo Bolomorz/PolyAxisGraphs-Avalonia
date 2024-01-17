@@ -17,7 +17,7 @@
 				<TextBlock x:Name="tbltitle" Margin="5" TextWrapping="WrapWithOverflow" HorizontalAlignment="Left" VerticalAlignment="Center"/>
 			</Border>
 			<Border BorderThickness="1" BorderBrush="Black" Background="Gainsboro" Grid.Column="3" Grid.Row="0">
-				<Button x:Name="btreturn" Click="" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+				<Button x:Name="btreturn" Click="ClickReturn" HorizontalAlignment="Center" VerticalAlignment="Center"/>
 			</Border>
 
 			<Border BorderThickness="1" BorderBrush="Black" Background="Gainsboro" Grid.Column="0" Grid.ColumnSpan="4" Grid.Row="1">
@@ -48,10 +48,10 @@
 				<TextBlock x:Name="tblprecision" Margin="5" TextWrapping="WrapWithOverflow" HorizontalAlignment="Left" VerticalAlignment="Center"/>
 			</Border>
 			<Border BorderThickness="1" BorderBrush="Black" Background="Gainsboro" Grid.Column="1" Grid.ColumnSpan="2" Grid.Row="10" Grid.RowSpan="2">
-				<TextBox x:Name="tboprecision" Margin="5" IsReadOnly="True" TextWrapping="WrapWithOverflow" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+				<TextBox x:Name="tboprecision" Margin="5" TextWrapping="WrapWithOverflow" HorizontalAlignment="Left" VerticalAlignment="Center"/>
 			</Border>
 			<Border BorderThickness="1" BorderBrush="Black" Background="Gainsboro" Grid.Column="3" Grid.Row="10" Grid.RowSpan="2">
-				<Button x:Name="btapplyprecision" Click="" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+				<Button x:Name="btapplyprecision" Click="ClickApplyPrecision" HorizontalAlignment="Center" VerticalAlignment="Center"/>
 			</Border>
 
 			<Border BorderThickness="1" BorderBrush="Black" Background="Gainsboro" Grid.Column="0" Grid.ColumnSpan="4" Grid.Row="12"/>
@@ -63,7 +63,7 @@
 				<TextBlock x:Name="tblorder" Margin="5" TextWrapping="WrapWithOverflow" HorizontalAlignment="Left" VerticalAlignment="Center"/>
 			</Border>
 			<Border BorderThickness="1" BorderBrush="Black" Background="Gainsboro" Grid.Column="1" Grid.ColumnSpan="3" Grid.Row="14" Grid.RowSpan="2">
-				<TextBox x:Name="tboorder" Margin="5" IsReadOnly="True" TextWrapping="WrapWithOverflow" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+				<TextBox x:Name="tboorder" Margin="5" TextWrapping="WrapWithOverflow" HorizontalAlignment="Left" VerticalAlignment="Center"/>
 			</Border>
 			<Border BorderThickness="1" BorderBrush="Black" Background="Gainsboro" Grid.Column="0" Grid.Row="16" Grid.RowSpan="2">
 				<TextBlock x:Name="tblselecttype" Margin="5" TextWrapping="WrapWithOverflow" HorizontalAlignment="Left" VerticalAlignment="Center"/>
@@ -72,7 +72,7 @@
 				<ListBox x:Name="lbselecttype" Margin="5" HorizontalAlignment="Left" VerticalAlignment="Center"/>
 			</Border>
 			<Border BorderThickness="1" BorderBrush="Black" Background="Gainsboro" Grid.Column="0" Grid.Row="18">
-				<Button x:Name="btcreate" Click="" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+				<Button x:Name="btcreate" Click="ClickCalculate" HorizontalAlignment="Center" VerticalAlignment="Center"/>
 			</Border>
 			<Border BorderThickness="1" BorderBrush="Black" Background="Gainsboro" Grid.Column="1" Grid.ColumnSpan="3" Grid.Row="18"/>	
 		</Grid>
