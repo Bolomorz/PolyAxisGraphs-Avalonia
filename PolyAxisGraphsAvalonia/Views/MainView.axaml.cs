@@ -35,7 +35,7 @@ public partial class MainView : UserControl
         if (!Directory.Exists("LanguageFile")) Directory.CreateDirectory("LanguageFile");
         if (!File.Exists("Settings.ini")) Settings.CreateDefault();
         if (!File.Exists(@"LanguageFile\EN.lng")) LanguagePack.CreateDefault();
-        if (!File.Exists(@"DataFiles\TestFile0.txt")) FileGenerator.GenerateDefault();
+        if (!File.Exists(@"DataFiles\TestFile0.txt")) FileGenerator.GenerateDefault(@"DataFiles\TestFile0.txt");
     }
 
     public void LoadControls()
@@ -47,7 +47,7 @@ public partial class MainView : UserControl
         }
         var ff = cg.pag.settings.FindValueFromKey("fontfamily");
         var cfs = cg.pag.settings.FindValueFromKey("controlfontsize");
-        if (ff is not null && cfs is not null && cg.pag.settings.currentlang is not null)
+        if (ff is not null && cfs is not null)
         {
             var fontfamily = new Avalonia.Media.FontFamily(ff);
             var fontsize = PolyAxisGraph.ReadStringToDouble(cfs);
@@ -62,8 +62,8 @@ public partial class MainView : UserControl
         }
         else
         {
-            ErrorWindow.Show(string.Format("error: failed to load: settings variable is null.\nfontfamily={0}\ncontrolfontsize={1}\ncurrentlang={2}",
-                ff, cfs, cg.pag.settings.currentlang));
+            ErrorWindow.Show(string.Format("error: failed to load: settings variable is null.\nfontfamily={0}\ncontrolfontsize={1}",
+                ff, cfs));
         }
     }
 
@@ -167,41 +167,48 @@ public partial class MainView : UserControl
             ErrorWindow.Show("error: pag is null -> settings file not found");
             return;
         }
-        var toplevel = TopLevel.GetTopLevel(this);
-        if (toplevel is null) return;
-        var id = cg.pag.settings.FindValueFromKey("initialdirectory");
-        if (id is null || id.Length == 0)
+        try
         {
-            var files = await toplevel.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
+            var toplevel = TopLevel.GetTopLevel(this);
+            if (toplevel is null) return;
+            var id = cg.pag.settings.FindValueFromKey("initialdirectory");
+            if (id is null || id.Length == 0)
             {
-                Title = "Open Data File",
-                AllowMultiple = false,
-                FileTypeFilter = new[] { DataFiles }
-            });
+                var files = await toplevel.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
+                {
+                    Title = "Open Data File",
+                    AllowMultiple = false,
+                    FileTypeFilter = new[] { DataFiles }
+                });
 
-            if (files is not null && files.Count >= 1)
+                if (files is not null && files.Count >= 1)
+                {
+                    string file = files[0].Path.AbsolutePath;
+                    TBFile.Text = file;
+                    cg.SetFile(file);
+                }
+            }
+            else
             {
-                string file = files[0].Path.AbsolutePath;
-                TBFile.Text = file;
-                cg.SetFile(file);
+                var files = await toplevel.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
+                {
+                    Title = "Open Data File",
+                    AllowMultiple = false,
+                    FileTypeFilter = new[] { DataFiles },
+                    SuggestedStartLocation = await toplevel.StorageProvider.TryGetFolderFromPathAsync(new System.Uri(new System.Uri(System.AppDomain.CurrentDomain.BaseDirectory), id))
+                });
+
+                if (files is not null && files.Count >= 1)
+                {
+                    string file = files[0].Path.AbsolutePath;
+                    TBFile.Text = file;
+                    cg.SetFile(file);
+                }
             }
         }
-        else
+        catch (System.Exception ex)
         {
-            var files = await toplevel.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
-            {
-                Title = "Open Data File",
-                AllowMultiple = false,
-                FileTypeFilter = new[] { DataFiles },
-                SuggestedStartLocation = await toplevel.StorageProvider.TryGetFolderFromPathAsync(new System.Uri(new System.Uri(System.AppDomain.CurrentDomain.BaseDirectory), id))
-            });
-
-            if (files is not null && files.Count >= 1)
-            {
-                string file = files[0].Path.AbsolutePath;
-                TBFile.Text = file;
-                cg.SetFile(file);
-            }
+            ErrorWindow.Show(ex.ToString());
         }
     }
 
@@ -217,53 +224,60 @@ public partial class MainView : UserControl
             ErrorWindow.Show("error: pag is null -> settings file not found");
             return;
         }
-        var toplevel = TopLevel.GetTopLevel(this);
-        if (toplevel is null) return;
-        var id = cg.pag.settings.FindValueFromKey("initialdirectory");
-        if (id is null || id.Length == 0)
+        try
         {
-            var file = await toplevel.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
+            var toplevel = TopLevel.GetTopLevel(this);
+            if (toplevel is null) return;
+            var id = cg.pag.settings.FindValueFromKey("initialdirectory");
+            if (id is null || id.Length == 0)
             {
-                Title = "Save File",
-                FileTypeChoices = new[] { Images },
-                ShowOverwritePrompt = true,
-                DefaultExtension = ".png"
-            });
+                var file = await toplevel.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
+                {
+                    Title = "Save File",
+                    FileTypeChoices = new[] { Images },
+                    ShowOverwritePrompt = true,
+                    DefaultExtension = ".png"
+                });
 
-            if(file is not null)
+                if (file is not null)
+                {
+                    PixelSize psize = new((int)MainCanvas.Width, (int)MainCanvas.Height);
+                    Size size = new(MainCanvas.Width, MainCanvas.Height);
+                    Vector dpi = new(96, 96);
+                    RenderTargetBitmap rtb = new RenderTargetBitmap(psize, dpi);
+                    MainCanvas.Measure(size);
+                    MainCanvas.Arrange(new Rect(size));
+                    rtb.Render(MainCanvas);
+                    rtb.Save(file.Path.AbsolutePath);
+                }
+            }
+            else
             {
-                PixelSize psize = new((int)MainCanvas.Width, (int)MainCanvas.Height);
-                Size size = new(MainCanvas.Width, MainCanvas.Height);
-                Vector dpi = new(96, 96);
-                RenderTargetBitmap rtb = new RenderTargetBitmap(psize, dpi);
-                MainCanvas.Measure(size);
-                MainCanvas.Arrange(new Rect(size));
-                rtb.Render(MainCanvas);
-                rtb.Save(file.Path.AbsolutePath);
+                var file = await toplevel.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
+                {
+                    Title = "Save File",
+                    FileTypeChoices = new[] { Images },
+                    ShowOverwritePrompt = true,
+                    DefaultExtension = ".png",
+                    SuggestedStartLocation = await toplevel.StorageProvider.TryGetFolderFromPathAsync(new System.Uri(new System.Uri(System.AppDomain.CurrentDomain.BaseDirectory), id))
+                });
+
+                if (file is not null)
+                {
+                    PixelSize psize = new((int)MainCanvas.Width, (int)MainCanvas.Height);
+                    Size size = new(MainCanvas.Width, MainCanvas.Height);
+                    Vector dpi = new(96, 96);
+                    RenderTargetBitmap rtb = new RenderTargetBitmap(psize, dpi);
+                    MainCanvas.Measure(size);
+                    MainCanvas.Arrange(new Rect(size));
+                    rtb.Render(MainCanvas);
+                    rtb.Save(file.Path.AbsolutePath);
+                }
             }
         }
-        else
+        catch (System.Exception ex)
         {
-            var file = await toplevel.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
-            {
-                Title = "Save File",
-                FileTypeChoices = new[] { Images },
-                ShowOverwritePrompt = true,
-                DefaultExtension = ".png",
-                SuggestedStartLocation = await toplevel.StorageProvider.TryGetFolderFromPathAsync(new System.Uri(new System.Uri(System.AppDomain.CurrentDomain.BaseDirectory), id))
-            });
-
-            if (file is not null)
-            {
-                PixelSize psize = new((int)MainCanvas.Width, (int)MainCanvas.Height);
-                Size size = new(MainCanvas.Width, MainCanvas.Height);
-                Vector dpi = new(96, 96); 
-                RenderTargetBitmap rtb = new RenderTargetBitmap(psize, dpi);
-                MainCanvas.Measure(size);
-                MainCanvas.Arrange(new Rect(size));
-                rtb.Render(MainCanvas);
-                rtb.Save(file.Path.AbsolutePath);
-            }
+            ErrorWindow.Show(ex.ToString());
         }
     }
 

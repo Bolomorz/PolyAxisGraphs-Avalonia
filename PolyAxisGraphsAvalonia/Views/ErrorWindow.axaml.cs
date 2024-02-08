@@ -5,7 +5,7 @@ namespace PolyAxisGraphsAvalonia.Views
 {
     public partial class ErrorWindow : Window
     {
-        private ErrorWindow()
+        public ErrorWindow()
         {
             InitializeComponent();
         }

@@ -7,14 +7,14 @@ namespace PolyAxisGraphsAvalonia.Views
 {
     public partial class RegressionSettingsView : UserControl
     {
-        PolyAxisGraphs_Backend.Series series { get; set; }
+        Series series { get; set; }
         CanvasGraph cg { get; set; }
 
         const int heightfactor = 2;
         const int controlcount = 19;
         const int width = 600;
 
-        public RegressionSettingsView(PolyAxisGraphs_Backend.Series _series, CanvasGraph _cg)
+        public RegressionSettingsView(Series _series, CanvasGraph _cg)
         {
             series = _series;
             cg = _cg;
@@ -25,7 +25,7 @@ namespace PolyAxisGraphsAvalonia.Views
             }
             this.Width = width;
             var cfs = cg.pag.settings.FindValueFromKey("controlfontsize");
-            this.Height = (cfs is null) ? 15 * heightfactor * controlcount : heightfactor * controlcount * PolyAxisGraphs_Backend.PolyAxisGraph.ReadStringToDouble(cfs);
+            this.Height = (cfs is null) ? 15 * heightfactor * controlcount : heightfactor * controlcount * PolyAxisGraph.ReadStringToDouble(cfs);
             InitializeComponent();
             MainGrid.Width = width;
             MainGrid.Height = this.Height;
