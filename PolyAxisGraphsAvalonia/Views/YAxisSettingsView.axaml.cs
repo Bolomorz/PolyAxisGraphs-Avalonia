@@ -25,7 +25,8 @@ namespace PolyAxisGraphsAvalonia.Views
                 return;
             }
             this.Width = width;
-            this.Height = (cg.pag.settings.controlfontsize is null) ? 15 * heightfactor * controlcount : heightfactor * controlcount * (double)cg.pag.settings.controlfontsize;
+            var cfs = cg.pag.settings.FindValueFromKey("controlfontsize");
+            this.Height = (cfs is null) ? 15 * heightfactor * controlcount : heightfactor * controlcount * PolyAxisGraphs_Backend.PolyAxisGraph.ReadStringToDouble(cfs);
             InitializeComponent();
             MainGrid.Width = width;
             MainGrid.Height = this.Height;
@@ -39,10 +40,12 @@ namespace PolyAxisGraphsAvalonia.Views
                 ErrorWindow.Show("error: pag is null -> settings file not found");
                 return;
             }
-            if (cg.pag.settings.fontfamily is not null && cg.pag.settings.controlfontsize is not null && cg.pag.settings.currentlang is not null)
+            var sff = cg.pag.settings.FindValueFromKey("fontfamily");
+            var scf = cg.pag.settings.FindValueFromKey("controlfontsize");
+            if (sff is not null && scf is not null && cg.pag.settings.currentlang is not null)
             {
-                var ff = new Avalonia.Media.FontFamily(cg.pag.settings.fontfamily);
-                var fs = cg.pag.settings.controlfontsize;
+                var ff = new Avalonia.Media.FontFamily(sff);
+                var fs = PolyAxisGraphs_Backend.PolyAxisGraph.ReadStringToDouble(scf);
 
                 var controlheight = this.Height / controlcount - 10;
                 var controlwidth = this.Width / 4;
@@ -123,7 +126,7 @@ namespace PolyAxisGraphsAvalonia.Views
             else
             {
                 ErrorWindow.Show(string.Format("error: failed to load: settings variable is null.\nfontfamily={0}\ncontrolfontsize={1}\ncurrentlang={2}\nfilepath={3}",
-                    cg.pag.settings.fontfamily, cg.pag.settings.controlfontsize, cg.pag.settings.currentlang, cg.pag.settings.file));
+                    cg.pag.settings.FindValueFromKey("fontfamily"), cg.pag.settings.FindValueFromKey("controlfontsize"), cg.pag.settings.currentlang));
             }
         }
 

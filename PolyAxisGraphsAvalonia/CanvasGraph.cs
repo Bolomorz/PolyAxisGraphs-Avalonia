@@ -12,8 +12,11 @@ using PolyAxisGraphs_Backend;
 using System.Diagnostics;
 using Avalonia.Controls.Documents;
 using Avalonia.Controls.Primitives;
+using PolyAxisGraphsAvalonia.Views;
+using System.IO;
+using Avalonia.Platform;
 
-namespace PolyAxisGraphsAvalonia.Views
+namespace PolyAxisGraphsAvalonia
 {
     public class CanvasGraph
     {
@@ -27,7 +30,7 @@ namespace PolyAxisGraphsAvalonia.Views
             canvas = _canvas;
             try
             {
-                pag = new PolyAxisGraph(new Settings(@"..\..\..\Settings.ini"));
+                pag = new PolyAxisGraph(new Settings(@"Settings.ini"));
             }
             catch (Exception ex)
             {
@@ -37,7 +40,7 @@ namespace PolyAxisGraphsAvalonia.Views
             mw = _mw;
         }
 
-        public static Avalonia.Media.ISolidColorBrush ColorToBrush(System.Drawing.Color color)
+        public static ISolidColorBrush ColorToBrush(System.Drawing.Color color)
         {
             Avalonia.Media.Color amcolor = Avalonia.Media.Color.FromArgb(color.A, color.R, color.G, color.B);
             return new SolidColorBrush(amcolor);
@@ -103,6 +106,11 @@ namespace PolyAxisGraphsAvalonia.Views
         {
             try
             {
+                if (pag is null)
+                {
+                    ErrorWindow.Show("error: pag is null -> probably settings file not found");
+                    return;
+                }
                 gde = new GraphDrawingElements(canvas.Width, canvas.Height, pag);
                 DrawGDE();
             }
@@ -116,8 +124,10 @@ namespace PolyAxisGraphsAvalonia.Views
         {
             if (gde is null || pag is null) return;
             canvas.Children.Clear();
-            FontFamily ff = (pag.settings.fontfamily is null) ? new FontFamily("Consolas") : new FontFamily(pag.settings.fontfamily);
-            double fontsize = (pag.settings.chartfontsize is null) ? 10 : (double)pag.settings.chartfontsize;
+            var fontfamily = pag.settings.FindValueFromKey("fontfamily");
+            var chartfontsize = pag.settings.FindValueFromKey("chartfontsize");
+            FontFamily ff = fontfamily is null ? new FontFamily("Consolas") : new FontFamily(fontfamily);
+            double fontsize = chartfontsize is null ? 10 : PolyAxisGraph.ReadStringToDouble(chartfontsize);
             var sol = gde.CalculateChart();
             if (sol.err is not null) DrawText(10, ff, sol.err, 0, 0, canvas.Width, canvas.Height);
             else
@@ -133,7 +143,7 @@ namespace PolyAxisGraphsAvalonia.Views
                 if (sol.functions is not null && sol.functions.Count > 0)
                 {
                     double left, top, height, width, right, bottom;
-                    if(sol.functionarea is null)
+                    if (sol.functionarea is null)
                     {
                         left = 0.91 * canvas.Width;
                         top = 0.11 * canvas.Height;
@@ -163,7 +173,7 @@ namespace PolyAxisGraphsAvalonia.Views
             mw.CreateControls();
         }
 
-        private void DrawLine(Avalonia.Point start, Avalonia.Point end, Avalonia.Media.ISolidColorBrush brush, double thickness)
+        private void DrawLine(Avalonia.Point start, Avalonia.Point end, ISolidColorBrush brush, double thickness)
         {
             Line line = new Line()
             {
@@ -175,7 +185,7 @@ namespace PolyAxisGraphsAvalonia.Views
             canvas.Children.Add(line);
         }
 
-        private void DrawText(double fontsize, Avalonia.Media.FontFamily fontFamily, string text, double left, double top, double right, double bottom)
+        private void DrawText(double fontsize, FontFamily fontFamily, string text, double left, double top, double right, double bottom)
         {
             TextBlock tb = new()
             {
@@ -207,13 +217,13 @@ namespace PolyAxisGraphsAvalonia.Views
                 TextWrapping = TextWrapping.WrapWithOverflow
             };
             outer.Inlines = new InlineCollection();
-            foreach(var fs in strings)
+            foreach (var fs in strings)
             {
                 if (fs.superscript)
                 {
                     Run run = new()
                     {
-                        FontSize = fontsize * 2/3,
+                        FontSize = fontsize * 2 / 3,
                         FontFamily = fontFamily,
                         BaselineAlignment = BaselineAlignment.Top,
                         Text = fs.function
@@ -239,7 +249,7 @@ namespace PolyAxisGraphsAvalonia.Views
             canvas.Children.Add(outer);
         }
 
-        private void DrawEllipse(double width, double height, Avalonia.Media.ISolidColorBrush fill, Avalonia.Media.ISolidColorBrush stroke, double thickness, double left, double top)
+        private void DrawEllipse(double width, double height, ISolidColorBrush fill, ISolidColorBrush stroke, double thickness, double left, double top)
         {
             Ellipse ellipse = new()
             {
@@ -254,12 +264,12 @@ namespace PolyAxisGraphsAvalonia.Views
             canvas.Children.Add(ellipse);
         }
 
-        private void DrawRectangle(double width, double height, Avalonia.Media.ISolidColorBrush fill, Avalonia.Media.ISolidColorBrush stroke, double thickness, double left, double top)
+        private void DrawRectangle(double width, double height, ISolidColorBrush fill, ISolidColorBrush stroke, double thickness, double left, double top)
         {
             Avalonia.Controls.Shapes.Rectangle rectangle = new()
             {
-                Width= width,
-                Height= height,
+                Width = width,
+                Height = height,
                 Fill = fill,
                 Stroke = stroke,
                 StrokeThickness = thickness

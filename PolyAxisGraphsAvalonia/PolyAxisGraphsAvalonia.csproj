@@ -25,10 +25,4 @@
       <HintPath>PolyAxisGraphs Backend.dll</HintPath>
     </Reference>
   </ItemGroup>
-
-  <ItemGroup>
-    <None Update="Settings.ini">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
 </Project>

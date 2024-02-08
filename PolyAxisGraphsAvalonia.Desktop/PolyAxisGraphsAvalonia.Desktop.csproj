@@ -16,8 +16,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\PolyAxisGraphsAvalonia\PolyAxisGraphsAvalonia.csproj" />
-  </ItemGroup>
-
+  </ItemGroup> 
+	
   <ItemGroup>
     <Reference Include="PolyAxisGraphs Backend">
       <HintPath>PolyAxisGraphs Backend.dll</HintPath>

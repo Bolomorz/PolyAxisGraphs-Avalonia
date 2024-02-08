@@ -8,6 +8,8 @@ using MathNet.Numerics;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using ReactiveUI;
 using System.Diagnostics;
+using System.IO;
+using PolyAxisGraphs_Backend;
 
 namespace PolyAxisGraphsAvalonia.Views;
 
@@ -21,9 +23,18 @@ public partial class MainView : UserControl
     public MainView()
     {
         InitializeComponent();
+        CheckFileSystem();
         cg = new CanvasGraph(MainCanvas, this);
         LoadControls();
         DataContext = this;
+    }
+
+    private void CheckFileSystem()
+    {
+        if (!Directory.Exists("DataFiles")) Directory.CreateDirectory("DataFiles");
+        if (!Directory.Exists("LanguageFile")) Directory.CreateDirectory("LanguageFile");
+        if (!File.Exists("Settings.ini")) Settings.CreateDefault();
+        if (!File.Exists(@"LanguageFile\EN.lng")) LanguagePack.CreateDefault();
     }
 
     public void LoadControls()
@@ -33,10 +44,12 @@ public partial class MainView : UserControl
             ErrorWindow.Show("error: pag is null -> settings file not found");
             return;
         }
-        if (cg.pag.settings.fontfamily is not null && cg.pag.settings.controlfontsize is not null && cg.pag.settings.currentlang is not null)
+        var ff = cg.pag.settings.FindValueFromKey("fontfamily");
+        var cfs = cg.pag.settings.FindValueFromKey("controlfontsize");
+        if (ff is not null && cfs is not null && cg.pag.settings.currentlang is not null)
         {
-            var fontfamily = new Avalonia.Media.FontFamily(cg.pag.settings.fontfamily);
-            var fontsize = cg.pag.settings.controlfontsize;
+            var fontfamily = new Avalonia.Media.FontFamily(ff);
+            var fontsize = PolyAxisGraph.ReadStringToDouble(cfs);
             TBFile.FontFamily = fontfamily;
             TBFile.FontSize = (double)fontsize;
             TBFile.Text = cg.pag.settings.currentlang.FindElement("tbopenfile");
@@ -48,8 +61,8 @@ public partial class MainView : UserControl
         }
         else
         {
-            ErrorWindow.Show(string.Format("error: failed to load: settings variable is null.\nfontfamily={0}\ncontrolfontsize={1}\ncurrentlang={2}\nfilepath={3}",
-                cg.pag.settings.fontfamily, cg.pag.settings.controlfontsize, cg.pag.settings.currentlang, cg.pag.settings.file));
+            ErrorWindow.Show(string.Format("error: failed to load: settings variable is null.\nfontfamily={0}\ncontrolfontsize={1}\ncurrentlang={2}",
+                ff, cfs, cg.pag.settings.currentlang));
         }
     }
 
@@ -61,9 +74,11 @@ public partial class MainView : UserControl
             return;
         }
         ControlsGrid.Children.Clear();
-        var fontfamily = (cg.pag.settings.fontfamily is null) ? new Avalonia.Media.FontFamily("Consolas") : new Avalonia.Media.FontFamily(cg.pag.settings.fontfamily);
-        var fontsize = (cg.pag.settings.controlfontsize is null) ? 15 : cg.pag.settings.controlfontsize;
-        PolyAxisGraphs_Backend.LanguagePack language = (cg.pag.settings.currentlang is null) ? PolyAxisGraphs_Backend.LanguagePack.EN : cg.pag.settings.currentlang;
+        var ff = cg.pag.settings.FindValueFromKey("fontfamily");
+        var fs = cg.pag.settings.FindValueFromKey("controlfontsize");
+        var fontfamily = (ff is null) ? new Avalonia.Media.FontFamily("Consolas") : new Avalonia.Media.FontFamily(ff);
+        var fontsize = (fs is null) ? 15 : PolyAxisGraph.ReadStringToDouble(fs);
+        LanguagePack language = (cg.pag.settings.currentlang is null) ? LanguagePack.EN : cg.pag.settings.currentlang;
         try {
             Button BTSave = new Button();
             BTSave.Content = language.FindElement("btsavefilepng");
@@ -153,7 +168,8 @@ public partial class MainView : UserControl
         }
         var toplevel = TopLevel.GetTopLevel(this);
         if (toplevel is null) return;
-        if (cg.pag.settings.initialdirectory is null || cg.pag.settings.initialdirectory.Length == 0)
+        var id = cg.pag.settings.FindValueFromKey("initialdirectory");
+        if (id is null || id.Length == 0)
         {
             var files = await toplevel.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
             {
@@ -176,9 +192,7 @@ public partial class MainView : UserControl
                 Title = "Open Data File",
                 AllowMultiple = false,
                 FileTypeFilter = new[] { DataFiles },
-                SuggestedStartLocation = (cg.pag.settings.initialdirectory[0] == '.') ?
-                await toplevel.StorageProvider.TryGetFolderFromPathAsync(new System.Uri(new System.Uri(System.AppDomain.CurrentDomain.BaseDirectory), cg.pag.settings.initialdirectory)) :
-                await toplevel.StorageProvider.TryGetFolderFromPathAsync(new System.Uri(cg.pag.settings.initialdirectory))
+                SuggestedStartLocation = await toplevel.StorageProvider.TryGetFolderFromPathAsync(new System.Uri(new System.Uri(System.AppDomain.CurrentDomain.BaseDirectory), id))
             });
 
             if (files is not null && files.Count >= 1)
@@ -204,7 +218,8 @@ public partial class MainView : UserControl
         }
         var toplevel = TopLevel.GetTopLevel(this);
         if (toplevel is null) return;
-        if(cg.pag.settings.initialdirectory is null || cg.pag.settings.initialdirectory.Length == 0)
+        var id = cg.pag.settings.FindValueFromKey("initialdirectory");
+        if (id is null || id.Length == 0)
         {
             var file = await toplevel.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
             {
@@ -234,9 +249,7 @@ public partial class MainView : UserControl
                 FileTypeChoices = new[] { Images },
                 ShowOverwritePrompt = true,
                 DefaultExtension = ".png",
-                SuggestedStartLocation = (cg.pag.settings.initialdirectory[0] == '.') ?
-                await toplevel.StorageProvider.TryGetFolderFromPathAsync(new System.Uri(new System.Uri(System.AppDomain.CurrentDomain.BaseDirectory), cg.pag.settings.initialdirectory)) :
-                await toplevel.StorageProvider.TryGetFolderFromPathAsync(new System.Uri(cg.pag.settings.initialdirectory))
+                SuggestedStartLocation = await toplevel.StorageProvider.TryGetFolderFromPathAsync(new System.Uri(new System.Uri(System.AppDomain.CurrentDomain.BaseDirectory), id))
             });
 
             if (file is not null)
