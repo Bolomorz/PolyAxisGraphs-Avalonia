@@ -35,6 +35,7 @@ public partial class MainView : UserControl
         if (!Directory.Exists("LanguageFile")) Directory.CreateDirectory("LanguageFile");
         if (!File.Exists("Settings.ini")) Settings.CreateDefault();
         if (!File.Exists(@"LanguageFile\EN.lng")) LanguagePack.CreateDefault();
+        if (!File.Exists(@"DataFiles\TestFile0.txt")) FileGenerator.GenerateDefault();
     }
 
     public void LoadControls()
